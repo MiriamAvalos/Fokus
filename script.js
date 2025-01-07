@@ -11,7 +11,10 @@ const botonIniciarPausar = document.querySelector('#start-pause');
 //escuchar musica por el tiempo que se requiera
 musica.loop = true;
 let tiempoTranscurridoEnSegundos = 5;
-let idIntervado = null;
+let idIntervalo = null;
+musicaComenzar = new Audio('./sonidos/play.wav');
+musicaPausa = new Audio('./sonidos/pause.mp3');
+musicaTerminoTiempo = new Audio('./sonidos/beep.mp3');
 
 //musica
 inputEnfoqueMusica.addEventListener('change', ()=>{
@@ -78,13 +81,33 @@ botonLargo.addEventListener('click', () => {
    
     //FUNCION PARA TEMPORIZADOR
     const cuentaRegresiva = () =>{
-        iniciarPausar()
-        tiempoTranscurridoEnSegundos -= 1
+        if(tiempoTranscurridoEnSegundos <= 0 ){
+            reiniciar();
+            musicaTerminoTiempo.play();
+            alert("tiempo final");
+            return
+            
+        }
+        tiempoTranscurridoEnSegundos -= 1;
         console.log("temporizador", tiempoTranscurridoEnSegundos);
     }
 
-    botonIniciarPausar.addEventListener('click', cuentaRegresiva)
+    botonIniciarPausar.addEventListener('click', iniciarPausar)
 
     function iniciarPausar(){
-        idIntervado = setInterval(cuentaRegresiva, 1000)
+        
+        if(idIntervalo){
+            musicaPausa.play();
+            reiniciar()
+            return;
+        }else{
+            musicaComenzar.play();
+            idIntervalo = setInterval(cuentaRegresiva, 1000)
+        }
+      
+    }
+
+    function reiniciar(){
+        clearInterval(idIntervalo);
+        idIntervalo = null;
     }

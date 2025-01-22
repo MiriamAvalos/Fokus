@@ -8,9 +8,13 @@ const botones = document.querySelectorAll('.app__card-button');
 const inputEnfoqueMusica = document.querySelector('#alternar-musica');
 const musica = new Audio('./sonidos/luna-rise-part-one.mp3');
 const botonIniciarPausar = document.querySelector('#start-pause');
+const textoIniciarPausar = document.querySelector('#start-pause span');
+const botonAccion = document.querySelector('.app__card-primary-butto-icon');
+const tiempoEnPantalla = document.querySelector('#timer');
+
 //escuchar musica por el tiempo que se requiera
 musica.loop = true;
-let tiempoTranscurridoEnSegundos = 5;
+let tiempoTranscurridoEnSegundos = 1500;
 let idIntervalo = null;
 musicaComenzar = new Audio('./sonidos/play.wav');
 musicaPausa = new Audio('./sonidos/pause.mp3');
@@ -26,22 +30,25 @@ inputEnfoqueMusica.addEventListener('change', ()=>{
 })
 
 botonCorto.addEventListener('click', () => {
+    tiempoTranscurridoEnSegundos = 300
     cambiarContexto('descanso-corto')
     botonCorto.classList.add('active')
 })
 
 botonEnfoque.addEventListener('click', () => {
+    tiempoTranscurridoEnSegundos = 1500
     cambiarContexto('enfoque')
     botonEnfoque.classList.add('active')
 })
 
 botonLargo.addEventListener('click', () => {
+    tiempoTranscurridoEnSegundos = 900
     cambiarContexto('descanso-largo')
     botonLargo.classList.add('active')
     })
 
     function cambiarContexto(contexto){
-
+     mostrarTiempo();
      //for para que detecte segun el contexto que botones limpiar cuando se presiona uno
      botones.forEach(function(contexto){
         contexto.classList.remove('active')
@@ -82,14 +89,16 @@ botonLargo.addEventListener('click', () => {
     //FUNCION PARA TEMPORIZADOR
     const cuentaRegresiva = () =>{
         if(tiempoTranscurridoEnSegundos <= 0 ){
-            reiniciar();
             musicaTerminoTiempo.play();
             alert("tiempo final");
+            reiniciar();
             return
             
         }
+        textoIniciarPausar.textContent = 'Pausar';
+        botonAccion.src = "./imagenes/pause.png";
         tiempoTranscurridoEnSegundos -= 1;
-        console.log("temporizador", tiempoTranscurridoEnSegundos);
+        mostrarTiempo();
     }
 
     botonIniciarPausar.addEventListener('click', iniciarPausar)
@@ -110,4 +119,17 @@ botonLargo.addEventListener('click', () => {
     function reiniciar(){
         clearInterval(idIntervalo);
         idIntervalo = null;
+        textoIniciarPausar.textContent = 'Comenzar';
+        botonAccion.src = "./imagenes/play_arrow.png";
     }
+
+
+
+
+    function mostrarTiempo() {
+        const tiempo = new Date(tiempoTranscurridoEnSegundos * 1000);
+        const tiempoFormateado = tiempo.toLocaleTimeString('es-MX',{minute:'2-digit', second: '2-digit'})
+        tiempoEnPantalla.innerHTML = `${tiempoFormateado}`
+    }
+
+    mostrarTiempo();
